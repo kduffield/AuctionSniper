@@ -1,6 +1,7 @@
 package net.infinitysum.auctionsniper;
 
 import net.infinitysum.auctionsniper.ui.Main;
+import net.infinitysum.auctionsniper.ui.MainWindow;
 
 import static net.infinitysum.auctionsniper.FakeAuctionServer.XMPP_HOSTNAME;
 
@@ -10,6 +11,7 @@ import static net.infinitysum.auctionsniper.FakeAuctionServer.XMPP_HOSTNAME;
 public class ApplicationRunner {
     public static final String SNIPER_ID= "sniper";
     public static final String SNIPER_PASSWORD = "sniper";
+    public static final String SNIPER_XMPP_ID = SNIPER_ID + "@localhost/Auction";
     private AuctionSniperDriver driver;
 
 
@@ -35,6 +37,10 @@ public class ApplicationRunner {
 
     public void showsSniperHasLostAuction(){
         driver.showsSniperStatus(Main.STATUS_LOST);
+    }
+
+    public void hasShownSniperIsBidding() {
+        driver.showsSniperStatus(MainWindow.STATUS_BIDDING);
     }
 
     public void stop(){

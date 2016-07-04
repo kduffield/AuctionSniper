@@ -2,7 +2,6 @@ package net.infinitysum.auctionsniper.ui;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-
 import java.awt.*;
 
 import static net.infinitysum.auctionsniper.ui.Main.SNIPER_STATUS_NAME;
@@ -14,6 +13,7 @@ import static net.infinitysum.auctionsniper.ui.Main.STATUS_JOINING;
 public class MainWindow extends JFrame {
     public static final String MAIN_WINDOW_NAME = "Auction Sniper Main";
     public static final String STATUS_LOST = "LOST";
+    public static final String STATUS_BIDDING = "BIDDING";
     private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
     public MainWindow(){
