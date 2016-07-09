@@ -74,9 +74,10 @@ public class FakeAuctionServer {
     }
 
     public void reportPrice(int price, int increment, String bidder) throws XMPPException {
+        System.out.println("Reporting price for bidder[" + bidder + "]");
         currentChat.sendMessage(
                 format("SOLVersion: 1.1; Event: PRICE;"
-                                + "CurrentPrice: %d; Increment: %d; Bidder: $s",
+                                + "CurrentPrice: %d; Increment: %d; Bidder: % s",
                         price, increment, bidder)
         );
 
