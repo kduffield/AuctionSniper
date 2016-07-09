@@ -10,4 +10,5 @@ public interface SniperListener {
 
     void sniperWinning();
 
+    void sniperWon();
 }

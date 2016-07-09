@@ -7,13 +7,19 @@ import org.jivesoftware.smack.packet.Message;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.infinitysum.auctionsniper.AuctionEventListener.PriceSource.FromOtherBidder;
+import static net.infinitysum.auctionsniper.AuctionEventListener.PriceSource.FromSniper;
+
 /**
  * Created by Kevin on 04/07/2016.
  */
 public class AuctionMessageTranslator implements MessageListener {
+    private final String sniperID;
     private final AuctionEventListener listener;
 
-    public AuctionMessageTranslator(AuctionEventListener listener) {
+
+    public AuctionMessageTranslator(String sniperID, AuctionEventListener listener) {
+        this.sniperID = sniperID;
         this.listener = listener;
     }
 
@@ -25,7 +31,7 @@ public class AuctionMessageTranslator implements MessageListener {
         if ("CLOSE".equals(eventType)) {
             listener.auctionClosed();
         } else if ("PRICE".equals(eventType)) {
-            listener.currentPrice(event.currentPrice(), event.increment());
+            listener.currentPrice(event.currentPrice(), event.increment(), event.isFrom(sniperID));
         }
 
     }
@@ -35,6 +41,7 @@ public class AuctionMessageTranslator implements MessageListener {
         private final Map<String, String> fields = new HashMap<String, String>();
 
         public String type() {
+
             return get("Event");
         }
 
@@ -47,6 +54,7 @@ public class AuctionMessageTranslator implements MessageListener {
         }
 
         private int getInt(String fieldName) {
+
             return Integer.parseInt(get(fieldName));
         }
 
@@ -71,6 +79,14 @@ public class AuctionMessageTranslator implements MessageListener {
             return messageBody.split(";");
         }
 
+        public AuctionEventListener.PriceSource isFrom(String sniperID) {
+            System.out.println("Checking price source for sniperID[" + sniperID + "] against bidder[" + bidder() + "]");
+            return sniperID.equals(bidder()) ? FromSniper : FromOtherBidder;
+        }
+
+        private String bidder() {
+            return get("Bidder");
+        }
     }
 
 }
