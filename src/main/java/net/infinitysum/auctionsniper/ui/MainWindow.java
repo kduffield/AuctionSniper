@@ -1,41 +1,58 @@
 package net.infinitysum.auctionsniper.ui;
 
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import java.awt.*;
+import net.infinitysum.auctionsniper.SniperSnapshot;
 
-import static net.infinitysum.auctionsniper.ui.Main.SNIPER_STATUS_NAME;
-import static net.infinitysum.auctionsniper.ui.Main.STATUS_JOINING;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by Kevin on 03/07/2016.
  */
 public class MainWindow extends JFrame {
     public static final String MAIN_WINDOW_NAME = "Auction Sniper Main";
-    public static final String STATUS_LOST = "LOST";
-    public static final String STATUS_BIDDING = "BIDDING";
-    public static final String STATUS_WINNING = "WINNING";
-    public static final String STATUS_WON = "WON";
-    private final JLabel sniperStatus = createLabel(STATUS_JOINING);
+    public static final String APPLICATION_TITLE = "Auction Sniper";
+    private static final String SNIPERS_TABLE_NAME = "Auction Sniper Table";
+    // private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
-    public MainWindow(){
-        super("Auction Sniper");
+    private final SnipersTableModel snipers;
+
+    public MainWindow(SnipersTableModel snipers) {
+        super(APPLICATION_TITLE);
+        this.snipers = snipers;
+
         setName(MAIN_WINDOW_NAME);
-        add(sniperStatus);
+        //add(sniperStatus);
+        fillContentPane(makeSnipersTable());
+        pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
-    private static JLabel createLabel(String initialText){
-        JLabel result = new JLabel(initialText);
-        result.setName(SNIPER_STATUS_NAME);
-        result.setBorder(new LineBorder(Color.BLACK));
-        return result;
+    private void fillContentPane(JTable snipersTable) {
+        final Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
+
+        contentPane.add(new JScrollPane(snipersTable), BorderLayout.CENTER);
     }
 
-    public void showStatus(String status){
-        sniperStatus.setText(status);
+    private JTable makeSnipersTable() {
+        final JTable snipersTable = new JTable(snipers);
+        snipersTable.setName(SNIPERS_TABLE_NAME);
+        return snipersTable;
     }
 
+//    private static JLabel createLabel(String initialText){
+//        JLabel result = new JLabel(initialText);
+//        result.setName(SNIPER_STATUS_NAME);
+//        result.setBorder(new LineBorder(Color.BLACK));
+//        return result;
+//    }
+
+
+    public void sniperStateChanged(SniperSnapshot sniperSnapshot) {
+        snipers.sniperStateChanged(sniperSnapshot);
+
+
+    }
 
 }

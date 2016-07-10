@@ -1,6 +1,9 @@
 package net.infinitysum.auctionsniper.ui;
 
-import net.infinitysum.auctionsniper.*;
+import net.infinitysum.auctionsniper.Auction;
+import net.infinitysum.auctionsniper.AuctionMessageTranslator;
+import net.infinitysum.auctionsniper.AuctionSniper;
+import net.infinitysum.auctionsniper.XMPPAuction;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -16,8 +19,8 @@ import static java.lang.String.format;
  */
 public class Main {
     public static final String SNIPER_STATUS_NAME = "sniper status";
-    public static final String STATUS_JOINING = "JOINING";
-    public static final String STATUS_LOST = "LOST";
+    //public static final String STATUS_JOINING = "JOINING";
+    // public static final String STATUS_LOST = "LOST";
     // public static final String STATUS_BIDDING = "BIDDING";
 
     private static final int ARG_HOSTNAME = 0;
@@ -31,8 +34,10 @@ public class Main {
     public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
     public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
-    private MainWindow ui;
+    private MainWindow mainWindow;
     private Chat notToBeGCd;
+
+    private final SnipersTableModel snipers = new SnipersTableModel();
 
 
     public Main() throws Exception {
@@ -54,7 +59,7 @@ public class Main {
         this.notToBeGCd = chat;
 
         Auction auction = new XMPPAuction(chat);
-        chat.addMessageListener(new AuctionMessageTranslator(connection.getUser(), new AuctionSniper(auction, new SniperStateDisplayer())));
+        chat.addMessageListener(new AuctionMessageTranslator(connection.getUser(), new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))));
 
         auction.join();
     }
@@ -72,7 +77,7 @@ public class Main {
     private void startUserInterface() throws Exception {
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
-                ui = new MainWindow();
+                mainWindow = new MainWindow(snipers);
             }
         });
     }
@@ -82,7 +87,7 @@ public class Main {
     }
 
     private void disconnectWhenUICloses(final XMPPConnection connection) {
-        ui.addWindowListener(new WindowAdapter() {
+        mainWindow.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 connection.disconnect();
@@ -90,36 +95,5 @@ public class Main {
         });
     }
 
-
-
-
-    public class SniperStateDisplayer implements SniperListener {
-
-        public void sniperLost() {
-            showStatus(MainWindow.STATUS_LOST);
-
-        }
-
-        public void sniperBidding() {
-            showStatus(MainWindow.STATUS_BIDDING);
-        }
-
-        public void sniperWinning() {
-            showStatus(MainWindow.STATUS_WINNING);
-        }
-
-        public void sniperWon() {
-            showStatus(MainWindow.STATUS_WON);
-        }
-
-        private void showStatus(final String status) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    ui.showStatus(status);
-                }
-            });
-        }
-
-    }
 
 }
