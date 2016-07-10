@@ -10,7 +10,7 @@ public interface AuctionEventListener {
 
     ;
 
-    public void auctionClosed();
+    void auctionClosed();
 
     void currentPrice(int price, int increment, PriceSource priceSource);
 }
